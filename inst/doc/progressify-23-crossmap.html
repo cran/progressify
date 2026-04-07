@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'crossmap' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'crossmap' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'crossmap' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{crossmap}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(crossmap)
+
+slow_fcn &lt;- function(x, y) {
+  Sys.sleep(0.1)  # emulate work
+  x * y
+}
+
+xs &lt;- list(1:5, 1:5)
+ys &lt;- xmap(xs, slow_fcn) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=crossmap">crossmap</a></strong> functions such as <code>xmap()</code>.</p>
+<p>The <strong>crossmap</strong> package extends <strong>purrr</strong> with functions that apply
+a function to every combination of elements in a list of inputs.
+For example, <code>xmap()</code> computes the cross product of its inputs:</p>
+<pre><code class="language-r">library(crossmap)
+xs &lt;- list(1:5, 1:5)
+ys &lt;- xmap(xs, slow_fcn)
+</code></pre>
+<p>Here <code>xmap()</code> provides no feedback on how far it has progressed,
+but we can easily add progress reporting by using:</p>
+<pre><code class="language-r">library(crossmap)
+
+library(progressify)
+handlers(global = TRUE)
+
+xs &lt;- list(1:5, 1:5)
+ys &lt;- xmap(xs, slow_fcn) |&gt; progressify()
+</code></pre>
+<p>Using the default progress handler, the progress reporting will
+appear as:</p>
+<pre><code class="language-plain">  |=====                    |  20%
+</code></pre>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>crossmap</strong>
+functions:</p>
+<ul>
+<li><code>xmap()</code> and variants (<code>xmap_chr()</code>, <code>xmap_dbl()</code>, <code>xmap_int()</code>,
+<code>xmap_lgl()</code>, <code>xmap_vec()</code>, <code>xmap_dfc()</code>, <code>xmap_dfr()</code>,
+<code>xmap_mat()</code>, <code>xmap_arr()</code>)</li>
+<li><code>xwalk()</code></li>
+<li><code>map_vec()</code>, <code>map2_vec()</code>, <code>pmap_vec()</code>, <code>imap_vec()</code></li>
+</ul>
+</body>
+</html>

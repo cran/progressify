@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'future.apply' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'future.apply' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'future.apply' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{future.apply}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(future.apply)
+plan(multisession)
+
+slow_fcn &lt;- function(x) {
+  Sys.sleep(0.1)  # emulate work
+  x^2
+}
+
+xs &lt;- 1:100
+ys &lt;- future_lapply(xs, slow_fcn) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=future.apply">future.apply</a></strong> functions such as <code>future_lapply()</code>,
+<code>future_tapply()</code>, <code>future_apply()</code>, and <code>future_replicate()</code>.</p>
+<p>The <strong>future.apply</strong> <code>future_lapply()</code> function is commonly used to
+apply a function to the elements of a vector or a list in parallel.
+For example,</p>
+<pre><code class="language-r">library(future.apply)
+plan(multisession)
+
+xs &lt;- 1:100
+ys &lt;- future_lapply(xs, slow_fcn)
+</code></pre>
+<p>Here <code>future_lapply()</code> provides no feedback on how far it has
+progressed, but we can easily add progress reporting by using:</p>
+<pre><code class="language-r">library(future.apply)
+plan(multisession)
+
+library(progressify)
+handlers(global = TRUE)
+
+ys &lt;- future_lapply(xs, slow_fcn) |&gt; progressify()
+</code></pre>
+<p>Using the default progress handler, the progress reporting will
+appear as:</p>
+<pre><code class="language-plain">  |=====                    |  20%
+</code></pre>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>future.apply</strong>
+functions:</p>
+<ul>
+<li><code>future_lapply()</code>, <code>future_vapply()</code>, <code>future_sapply()</code>, <code>future_tapply()</code></li>
+<li><code>future_mapply()</code>, <code>future_.mapply()</code>, <code>future_Map()</code></li>
+<li><code>future_eapply()</code></li>
+<li><code>future_apply()</code></li>
+<li><code>future_replicate()</code></li>
+<li><code>future_by()</code></li>
+</ul>
+</body>
+</html>

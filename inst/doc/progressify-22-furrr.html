@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'furrr' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'furrr' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'furrr' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{furrr}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(furrr)
+plan(multisession)
+
+slow_fcn &lt;- function(x) {
+  Sys.sleep(0.1)  # emulate work
+  x^2
+}
+
+xs &lt;- 1:100
+ys &lt;- xs |&gt; future_map(slow_fcn) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=furrr">furrr</a></strong> functions such as <code>future_map()</code>,
+<code>future_map_dbl()</code>, and <code>future_walk()</code>.</p>
+<p>The <strong>furrr</strong> <code>future_map()</code> function is commonly used to apply a
+function to the elements of a vector or a list in parallel. For
+example,</p>
+<pre><code class="language-r">library(furrr)
+plan(multisession)
+
+xs &lt;- 1:100
+ys &lt;- xs |&gt; future_map(slow_fcn)
+</code></pre>
+<p>Here <code>future_map()</code> provides no feedback on how far it has progressed,
+but we can easily add progress reporting by using:</p>
+<pre><code class="language-r">library(furrr)
+plan(multisession)
+
+library(progressify)
+handlers(global = TRUE)
+
+xs &lt;- 1:100
+ys &lt;- xs |&gt; future_map(slow_fcn) |&gt; progressify()
+</code></pre>
+<p>Using the default progress handler, the progress reporting will
+appear as:</p>
+<pre><code class="language-plain">  |=====                    |  20%
+</code></pre>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>furrr</strong> functions:</p>
+<ul>
+<li><code>future_map()</code>, <code>future_map_chr()</code>, <code>future_map_dbl()</code>, <code>future_map_int()</code>, <code>future_map_lgl()</code>, <code>future_map_raw()</code>, <code>future_map_dfr()</code>, <code>future_map_dfc()</code>, <code>future_map_at()</code>, <code>future_map_if()</code>, <code>future_walk()</code></li>
+<li><code>future_map2()</code>, <code>future_map2_chr()</code>, <code>future_map2_dbl()</code>, <code>future_map2_int()</code>, <code>future_map2_lgl()</code>, <code>future_map2_raw()</code>, <code>future_map2_dfr()</code>, <code>future_map2_dfc()</code>, <code>future_walk2()</code></li>
+<li><code>future_pmap()</code>, <code>future_pmap_chr()</code>, <code>future_pmap_dbl()</code>, <code>future_pmap_int()</code>, <code>future_pmap_lgl()</code>, <code>future_pmap_raw()</code>, <code>future_pmap_dfr()</code>, <code>future_pmap_dfc()</code>, <code>future_pwalk()</code></li>
+<li><code>future_imap()</code>, <code>future_imap_chr()</code>, <code>future_imap_dbl()</code>, <code>future_imap_int()</code>, <code>future_imap_lgl()</code>, <code>future_imap_raw()</code>, <code>future_imap_dfr()</code>, <code>future_imap_dfc()</code>, <code>future_iwalk()</code></li>
+<li><code>future_modify()</code>, <code>future_modify_at()</code>, <code>future_modify_if()</code></li>
+</ul>
+</body>
+</html>
