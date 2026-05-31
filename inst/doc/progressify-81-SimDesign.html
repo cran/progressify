@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'SimDesign' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'SimDesign' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'SimDesign' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{SimDesign}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(SimDesign)
+
+# Create small design
+Design &lt;- createDesign(factor1 = c(1, 2))
+
+Generate &lt;- function(condition, fixed_objects = NULL) {
+  rnorm(100)
+}
+
+Analyse &lt;- function(condition, dat, fixed_objects = NULL) {
+  mean(dat)
+}
+
+Summarise &lt;- function(condition, results, fixed_objects = NULL) {
+  mean(results)
+}
+
+# Run simulation with progress signaling
+res &lt;- runSimulation(design = Design, replications = 100,
+                     generate = Generate, analyse = Analyse,
+                     summarise = Summarise) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=SimDesign">SimDesign</a></strong> functions such as <code>runSimulation()</code>.  The
+<strong>SimDesign</strong> package provides a comprehensive framework for Monte
+Carlo simulation studies in R. For example, <code>runSimulation()</code>
+evaluates the <code>generate</code> and <code>analyse</code> functions <code>replications</code> times
+for each condition in the <code>design</code>:</p>
+<pre><code class="language-r">library(SimDesign)
+
+Design &lt;- createDesign(factor1 = c(1, 2))
+Generate &lt;- function(condition, fixed_objects = NULL) rnorm(100)
+Analyse &lt;- function(condition, dat, fixed_objects = NULL) mean(dat)
+Summarise &lt;- function(condition, results, fixed_objects = NULL) mean(results)
+
+res &lt;- runSimulation(design = Design, replications = 100,
+                     generate = Generate, analyse = Analyse,
+                     summarise = Summarise)
+</code></pre>
+<p>By default, <code>runSimulation()</code> provides its own text/console-based
+progress bar. However, we can easily replace this with
+<strong>progressr</strong>-based reporting using the <code>progressify()</code> function:</p>
+<pre><code class="language-r">library(SimDesign)
+library(progressify)
+handlers(global = TRUE)
+
+res &lt;- runSimulation(design = Design, replications = 100,
+                     generate = Generate, analyse = Analyse,
+                     summarise = Summarise) |&gt; progressify()
+</code></pre>
+<p>When progressified, <code>progressify()</code> automatically silences
+<code>SimDesign</code>'s native console progress bar and routes the progress
+updates through <code>progressr</code>. This means you can use any of the
+<a href="https://progressr.futureverse.org/articles/progressr-11-handlers.html">supported progressr handlers</a>, e.g., Shiny progress bars, system
+notifications, or CLI progress spinners.</p>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>SimDesign</strong> functions:</p>
+<ul>
+<li><code>runSimulation()</code></li>
+</ul>
+</body>
+</html>

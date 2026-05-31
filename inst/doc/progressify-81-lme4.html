@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'lme4' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'lme4' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'lme4' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{lme4}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(lme4)
+
+# Fit random-slope model
+fm1 &lt;- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+my_stat &lt;- function(fit) {
+  fixef(fit)
+}
+
+# Run bootstrap with progress signaling
+res &lt;- bootMer(fm1, my_stat, nsim = 1000) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=lme4">lme4</a></strong> functions such as <code>bootMer()</code>. The <strong>lme4</strong>
+package provides functions for fitting linear, generalized linear, and
+nonlinear mixed-effects models. For example, <code>bootMer()</code> runs a
+statistic function <code>nsim</code> times:</p>
+<pre><code class="language-r">library(lme4)
+
+# Fit random-slope model
+fm1 &lt;- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+my_stat &lt;- function(fit) {
+  fixef(fit)
+}
+
+res &lt;- bootMer(fm1, my_stat, nsim = 1000)
+</code></pre>
+<p>By default, <code>bootMer()</code> provides no progress feedback. However, we can
+easily add progress reporting using the <code>progressify()</code> function:</p>
+<pre><code class="language-r">library(lme4)
+library(progressify)
+handlers(global = TRUE)
+
+# Fit random-slope model
+fm1 &lt;- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+my_stat &lt;- function(fit) {
+  fixef(fit)
+}
+
+res &lt;- bootMer(fm1, my_stat, nsim = 1000) |&gt; progressify()
+</code></pre>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>lme4</strong>
+functions:</p>
+<ul>
+<li><code>bootMer()</code></li>
+</ul>
+</body>
+</html>

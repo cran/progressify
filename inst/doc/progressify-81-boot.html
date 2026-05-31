@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'boot' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'boot' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'boot' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{boot}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(boot)
+
+# Run bootstrap with progress signaling
+x &lt;- 1:100
+my_stat &lt;- function(data, i) mean(data[i])
+res &lt;- boot(data = x, statistic = my_stat, R = 1000) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=boot">boot</a></strong> functions such as <code>boot()</code>, <code>censboot()</code>, and <code>tsboot()</code>.</p>
+<p>The <strong>boot</strong> package provides functions for generating bootstrap replicates.
+Because these computations are iterative and computationally intensive, they can
+benefit significantly from progress reporting.</p>
+<p>For example, <code>boot()</code> runs a statistic function <code>R</code> times:</p>
+<pre><code class="language-r">library(boot)
+x &lt;- 1:100
+my_stat &lt;- function(data, i) mean(data[i])
+res &lt;- boot(data = x, statistic = my_stat, R = 1000)
+</code></pre>
+<p>By default, <code>boot()</code> provides no feedback on how far it has progressed.
+However, we can easily add progress reporting using the <code>progressify()</code> function:</p>
+<pre><code class="language-r">library(boot)
+
+library(progressify)
+handlers(global = TRUE)
+
+x &lt;- 1:100
+my_stat &lt;- function(data, i) mean(data[i])
+res &lt;- boot(data = x, statistic = my_stat, R = 1000) |&gt; progressify()
+</code></pre>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>boot</strong>
+functions:</p>
+<ul>
+<li><code>boot()</code></li>
+<li><code>censboot()</code></li>
+<li><code>tsboot()</code></li>
+</ul>
+</body>
+</html>

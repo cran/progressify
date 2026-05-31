@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'sandwich' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'sandwich' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'sandwich' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{sandwich}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(sandwich)
+
+fit &lt;- lm(dist ~ speed, data = cars)
+v &lt;- vcovBS(fit, R = 100L) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to <strong><a href="https://cran.r-project.org/package=sandwich">sandwich</a></strong> functions such as <code>vcovBS()</code> and <code>vcovJK()</code>.</p>
+<p>The <strong>sandwich</strong> package provides model-robust standard error
+estimators for cross-section, time series, and longitudinal data.
+Some of these estimators, specifically the bootstrap and jackknife
+estimators, are computationally intensive and can benefit from
+progress reporting.</p>
+<p>For example, <code>vcovBS()</code> computes bootstrapped covariance matrix
+estimators.</p>
+<pre><code class="language-r">library(sandwich)
+fit &lt;- lm(dist ~ speed, data = cars)
+v &lt;- vcovBS(fit, R = 100L)
+</code></pre>
+<p>Here <code>vcovBS()</code> provides no feedback on how far it has progressed,
+but we can easily add progress reporting by using:</p>
+<pre><code class="language-r">library(sandwich)
+
+library(progressify)
+handlers(global = TRUE)
+
+fit &lt;- lm(dist ~ speed, data = cars)
+v &lt;- vcovBS(fit, R = 100L) |&gt; progressify()
+</code></pre>
+<p>Similarly, the jackknife estimator <code>vcovJK()</code> can be progressified:</p>
+<pre><code class="language-r">library(sandwich)
+
+library(progressify)
+handlers(global = TRUE)
+
+fit &lt;- lm(dist ~ speed, data = cars)
+v &lt;- vcovJK(fit) |&gt; progressify()
+</code></pre>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>sandwich</strong>
+functions:</p>
+<ul>
+<li><code>vcovBS()</code></li>
+<li><code>vcovJK()</code></li>
+</ul>
+</body>
+</html>

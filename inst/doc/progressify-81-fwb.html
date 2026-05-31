@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Progress updates for 'fwb' functions</title>
+<style>
+.logos {
+    float: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1ex;
+    line-height: 0.8;
+}
+
+.logos img {
+    width: 80px;
+    height: autox;
+}
+
+.logos span {
+    font-size: 200%;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Progress updates for 'fwb' functions</h1>
+<!--
+%\VignetteIndexEntry{Progress updates for 'fwb' functions}
+%\VignetteAuthor{Henrik Bengtsson}
+%\VignetteKeyword{R}
+%\VignetteKeyword{package}
+%\VignetteKeyword{fwb}
+%\VignetteKeyword{vignette}
+%\VignetteKeyword{progressify}
+%\VignetteEngine{progressify::selfonly}
+-->
+<p>The <strong>progressify</strong> package allows you to easily add progress
+reporting to sequential and parallel map-reduce code by piping to the
+<code>progressify()</code> function. Easy!</p>
+<h1>TL;DR</h1>
+<pre><code class="language-r">library(progressify)
+handlers(global = TRUE)
+library(fwb)
+
+# Run fractional weighted bootstrap with progress signaling
+my_stat &lt;- function(data, w) coef(lm(mpg ~ cyl, data = data, weights = w))
+res &lt;- fwb(data = mtcars, statistic = my_stat, R = 1000) |&gt; progressify()
+</code></pre>
+<h1>Introduction</h1>
+<p>This vignette demonstrates how to use this approach to add progress
+reporting to the <strong><a href="https://cran.r-project.org/package=fwb">fwb</a></strong> package's main function <code>fwb()</code>.</p>
+<p>The <strong>fwb</strong> package provides functions for generating fractional weighted bootstrap replicates.
+For example, <code>fwb()</code> runs a statistic function <code>R</code> times:</p>
+<pre><code class="language-r">library(fwb)
+my_stat &lt;- function(data, w) coef(lm(mpg ~ cyl, data = data, weights = w))
+res &lt;- fwb(data = mtcars, statistic = my_stat, R = 1000)
+</code></pre>
+<p>By default, <code>fwb()</code> uses <code>verbose = TRUE</code>, which provides progress
+feedback via the <strong><a href="https://cran.r-project.org/package=pbapply">pbapply</a></strong> package, where the style can be
+controlled via <code>pbapply::pboptions()</code>.</p>
+<p>As an alternative, we can use the <code>progressify()</code> function to report
+on progress via any combination of <strong>progressr</strong> reporters. To do
+this, use:</p>
+<pre><code class="language-r">library(fwb)
+
+library(progressify)
+handlers(global = TRUE)
+
+my_stat &lt;- function(data, w) coef(lm(mpg ~ cyl, data = data, weights = w))
+res &lt;- fwb(data = mtcars, statistic = my_stat, R = 1000) |&gt; progressify()
+</code></pre>
+<p>Comment: This will disable the built-in progress feedback by setting
+<code>verbose = FALSE</code> in order to avoid dual reporting.</p>
+<h1>Supported Functions</h1>
+<p>The <code>progressify()</code> function supports the following <strong>fwb</strong>
+functions:</p>
+<ul>
+<li><code>fwb()</code></li>
+</ul>
+</body>
+</html>
